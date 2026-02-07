@@ -150,13 +150,16 @@ describe('Race Store Module', () => {
   it('need to detect all rounds complete', () => {
     const completeHorsesRound = store.state.horse.horses
     store.dispatch('race/generateProgram', completeHorsesRound)
+    store.dispatch('race/startRace')
 
-    // Complete all rounds
+    // Complete all rounds - finishRound automatically increments the index
     for (let i = 0; i < 6; i++) {
-      store.commit('race/SET_CURRENT_ROUND_INDEX', i)
       store.dispatch('race/finishRound', [])
     }
 
+    // Verify final state
+    expect(store.state.race.roundResults).toHaveLength(6)
+    expect(store.state.race.currentRoundIndex).toBe(5)
     expect(store.getters['race/allRoundsComplete']).toBe(true)
   })
 })
